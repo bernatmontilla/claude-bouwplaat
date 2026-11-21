@@ -20,13 +20,15 @@ when they want it); keep **project facts** in that project's `AGENTS.md` and `do
 ## Checklist for a new project
 
 1. **Create the repository** from this template (GitHub → *Use this template*), then clone it.
-2. **Labels**: `bash scripts/dev/labels.sh`.
-3. **GitHub settings** (repository → Settings):
-   - General → Pull Requests: allow squash merging only; *Automatically delete head branches*;
-     **Allow auto-merge**.
-   - Rules → Rulesets → new ruleset for `main`: require a pull request and the check `build`.
-   - Secrets → Actions: `AUTOMERGE_TOKEN`, a fine-grained token for this repository with Contents
-     and Pull requests read/write (so an automatic merge still starts CI and a deploy on `main`).
+2. **GitHub side, one command**: `bash scripts/dev/setup-repo.sh` (try `--dry-run` first). It
+   creates the labels, sets the merge settings (squash only, auto-merge allowed, merged branches
+   deleted) and the ruleset *Protect main* (a pull request and a green `build` to reach `main`).
+   None of that is copied by *Use this template*. It ends with the list of what is left by hand.
+3. **Secrets** (the script prints the commands):
+   - `AUTOMERGE_TOKEN`, a fine-grained token for this repository with Contents and Pull requests
+     read/write, so an automatic merge still starts CI and a deploy on `main`.
+   - `CLAUDE_CODE_OAUTH_TOKEN` from `claude setup-token`, for Claude's review in CI of risky PRs.
+     The Claude GitHub app must have access to the repository (github.com/apps/claude).
 4. **Cloud environment** for workers: [docs/cloud-environment.md](docs/cloud-environment.md).
 5. **The two scheduled tasks**: [docs/automation.md](docs/automation.md), then its *First things
    to test* with a throwaway issue.
@@ -36,12 +38,9 @@ when they want it); keep **project facts** in that project's `AGENTS.md` and `do
    `.claude/agents/risk-checker.md`, the toolchain step in `.github/workflows/ci.yml`) and writes
    `docs/product/`, the first issues and the plan. Until `labeler.yml` names this project's risky
    paths, put `hold` on PRs you want to read: everything else merges by itself.
-7. **Claude review in CI** for risky PRs: install the Claude GitHub app on the repository
-   (github.com/apps/claude), run `claude setup-token` on your Mac and add the result as the
-   repository secret `CLAUDE_CODE_OAUTH_TOKEN`.
-8. Delete what the project does not need: `ui-checker` (nothing to look at), `risk-checker` and
+7. Delete what the project does not need: `ui-checker` (nothing to look at), `risk-checker` and
    `claude-review.yml` (nothing risky, a plain website), `drain` (never local).
-9. Label the plan's first rows `idea`. Fix whatever in this template got in the way, then copy
+8. Label the plan's first rows `idea`. Fix whatever in this template got in the way, then copy
    that fix back to the template.
 
 ## Per kind of project
